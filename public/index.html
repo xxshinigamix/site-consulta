@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run Puppeteer Script</title>
+</head>
+<body>
+    <h1>Execute Puppeteer Script</h1>
+    <input type="text" id="searchInput" placeholder="Digite o CPF/CNPJ">
+    <button id="runScriptBtn">Run Script</button>
+    <pre id="output"></pre>
+    <div id="tableOutput"></div>
+
+    <script>
+        document.getElementById('runScriptBtn').addEventListener('click', () => {
+            const searchfor = document.getElementById('searchInput').value;
+            fetch('/run-script', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ searchfor: searchfor })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('output').textContent = data.output || data.error;
+                if (data.output) {
+                    // Extrai o HTML da tabela da saída e exibe no div tableOutput
+                    document.getElementById('tableOutput').innerHTML = data.output;
+                }
+            })
+            .catch(error => {
+                document.getElementById('output').textContent = error;
+            });
+        });
+    </script>
+</body>
+</html>
